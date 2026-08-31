@@ -1,0 +1,19 @@
+# archived original notebooks and non-distribution files
+.archive/
+
+# data, caches, and experiment outputs
+data/
+cache/
+results/
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+*.egg-info/
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
