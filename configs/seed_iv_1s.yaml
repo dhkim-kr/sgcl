@@ -1,0 +1,43 @@
+# SGCL on SEED-IV with 1-second windows (window-size comparison, paper Table 9).
+# Uses 1-s DE/PSD-LDS features regenerated in the eeg_feature_smooth layout with
+# capitalized variable keys (DE_LDS1..24 / PSD_LDS1..24); 10123 samples/subject.
+# The labeled budget is scaled x4 so the labeled fraction matches the 4-s Case 3.
+dataset: seed_iv
+
+data:
+  feature_dir: data/SEED_IV/ExtractedFeatures_1s   # session dirs 1/ 2/ 3/
+  de_feature: DE_LDS
+  psd_feature: PSD_LDS
+  cache_dir: cache/seed_iv_1s
+
+graph:
+  k_broad: 626
+  k_local: 30
+  diffusion_steps: 1
+  kernel_scale: 0.05
+  symmetrization: mirror
+
+model:
+  hid_channels: 256
+  out_channels: 64
+  proj_hid_channels: 16
+  num_classes: 4
+
+train:
+  seed: 2023
+  learning_rate: 0.005
+  epochs: 3000
+  tau: 0.7
+  loss_lambda: 0.01
+  pe1: 0.4
+  pe2: 0.4
+  pf1: 0.4
+  pf2: 0.4
+
+experiment:
+  cases: {3: 100}   # 25 per class x 4, keeping the labeled ratio of the 4-s run
+  run_cases: [3]
+  subjects: all
+  device: cuda:0
+  output_dir: results/seed_iv_1s
+  verbose: false

@@ -1,0 +1,48 @@
+# SGCL on SEED (3-class, 15 subjects, 62 channels, 5 bands, 1-s windows)
+dataset: seed
+
+data:
+  feature_dir: data/SEED/ExtractedFeatures/data     # 45 .mat files (15 subjects x 3 sessions)
+  label_dir: data/SEED/ExtractedFeatures/label      # label.mat
+  de_feature: de_LDS
+  psd_feature: psd_LDS
+  cache_dir: cache/seed
+
+graph:
+  k_broad: 3394          # broad k-NN of the sparse similarity matrix (paper k1)
+  k_local: 30            # local k-NN of the fusion kernel matrices (paper k2)
+  diffusion_steps: 1
+  kernel_scale: 0.05     # s in exp(-d / (s * mean(D)))
+  symmetrization: additive
+
+model:
+  hid_channels: 256
+  out_channels: 128      # node-embedding dimension
+  proj_hid_channels: 32
+  num_classes: 3
+
+train:
+  seed: 2023
+  learning_rate: 0.005
+  epochs: 3000
+  tau: 32                # InfoNCE temperature
+  loss_lambda: 0.01      # weight of the contrastive loss
+  pe1: 0.4               # edge-drop probability, view 1
+  pe2: 0.4               # edge-drop probability, view 2
+  pf1: 0.6               # feature-mask probability, view 1
+  pf2: 0.6               # feature-mask probability, view 2
+
+experiment:
+  cases: {1: 4, 2: 6, 3: 8}   # labeled samples per trial -> 60 / 90 / 120 per class
+  run_cases: [1, 2, 3]
+  subjects: all
+  device: cuda:0
+  output_dir: results/seed
+  verbose: false
+
+# method ablation G1-G9 (--mode ablation)
+ablation:
+  epochs: 200
+  learning_rate: 0.001
+  pca_components: {de: 9, psd: 6}
+  ge_proj_hid_channels: {de: 16, psd: 16, both: 32}

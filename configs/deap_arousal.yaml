@@ -1,0 +1,50 @@
+# SGCL on DEAP, arousal task (binary, 32 subjects, 32 channels, 4 bands, 1-s windows)
+dataset: deap
+
+data:
+  de_feature_dir: data/DEAP/extractedfeatures/de_lds
+  de_var: DE_LDS_data
+  psd_feature_dir: data/DEAP/extractedfeatures/psd_lds
+  psd_var: PSD_LDS_data
+  label_dir: data/DEAP/data_preprocessed_matlab
+  cache_dir: cache/deap
+
+graph:
+  k_broad: 1200
+  k_local: 30
+  diffusion_steps: 1
+  kernel_scale: 0.05
+  symmetrization: mirror
+
+model:
+  hid_channels: 128
+  out_channels: 64
+  proj_hid_channels: 16
+  num_classes: 2
+
+train:
+  seed: 2023
+  learning_rate: 0.005
+  epochs: 3000
+  tau: 0.7
+  loss_lambda: 0.01
+  pe1: 0.4
+  pe2: 0.4
+  pf1: 0.2
+  pf2: 0.2
+
+experiment:
+  task: arousal
+  cases: {1: 60, 2: 90, 3: 120}
+  run_cases: [1, 2, 3]
+  subjects: all
+  device: cuda:0
+  output_dir: results/deap
+  verbose: false
+
+# method ablation G1-G9 (--mode ablation)
+ablation:
+  epochs: 200
+  learning_rate: 0.001
+  pca_components: {de: 9, psd: 6}
+  ge_proj_hid_channels: {de: 8, psd: 8, both: 16}

@@ -1,0 +1,48 @@
+# SGCL on SEED-IV (4-class, 15 subjects, 62 channels, 5 bands, 4-s windows)
+dataset: seed_iv
+
+data:
+  feature_dir: data/SEED_IV/eeg_feature_smooth      # session dirs 1/ 2/ 3/, 15 .mat files each
+  de_feature: de_LDS
+  psd_feature: psd_LDS
+  cache_dir: cache/seed_iv
+
+graph:
+  k_broad: 626
+  k_local: 30
+  diffusion_steps: 1
+  kernel_scale: 0.05
+  symmetrization: mirror
+
+model:
+  hid_channels: 256
+  out_channels: 64
+  proj_hid_channels: 16
+  num_classes: 4
+
+train:
+  seed: 2023
+  learning_rate: 0.005
+  epochs: 3000
+  tau: 0.7
+  loss_lambda: 0.01
+  pe1: 0.4
+  pe2: 0.4
+  pf1: 0.4
+  pf2: 0.4
+
+experiment:
+  cases: {1: 15, 2: 20, 3: 25}   # labeled samples per class
+  run_cases: [1, 2, 3]
+  subjects: all
+  device: cuda:0
+  output_dir: results/seed_iv
+  verbose: false
+
+# method ablation G1-G9 (--mode ablation); projection widths follow the
+# original notebook cells
+ablation:
+  epochs: 200
+  learning_rate: 0.001
+  pca_components: {de: 9, psd: 6}
+  ge_proj_hid_channels: {de: 3, psd: 16, both: 32}

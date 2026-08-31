@@ -1,0 +1,41 @@
+# SGCL on SEED-IV, cross-session scenario (labeled session 2 -> unlabeled session 3;
+# DE features only, single-modality similarity graph with supervised edge pruning)
+dataset: seed_iv_cross_session
+
+data:
+  feature_dir: data/SEED_IV/eeg_feature_smooth
+  de_feature: de_LDS
+  psd_feature: psd_LDS
+  cache_dir: cache/seed_iv
+
+graph:
+  k_broad: 626
+  k_local: 30            # unused here (no fusion), kept for completeness
+  diffusion_steps: 1
+  kernel_scale: 0.05
+  symmetrization: mirror
+
+model:
+  hid_channels: 256
+  out_channels: 64
+  proj_hid_channels: 16
+  num_classes: 4
+
+train:
+  seed: 2023
+  learning_rate: 0.00007
+  epochs: 3000
+  tau: 0.7
+  loss_lambda: 0.01
+  pe1: 0.1
+  pe2: 0.2
+  pf1: 0.1
+  pf2: 0.2
+
+experiment:
+  source_session: 2      # all its samples are labeled
+  target_session: 3      # all its samples are the unlabeled test set
+  subjects: all
+  device: cuda:0
+  output_dir: results/seed_iv_cross_session
+  verbose: false
