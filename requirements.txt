@@ -1,0 +1,11 @@
+# Original experiments: Python 3.9, PyTorch 2.1.0, CUDA 11.8, Ubuntu 22.04.3 LTS
+numpy>=1.24
+scipy>=1.10
+scikit-learn>=1.5
+torch>=2.1
+natsort>=8.0
+PyYAML>=6.0
+
+# optional, analysis only
+matplotlib>=3.7      # t-SNE scatters (Fig. 4), saliency topomaps (Fig. 5)
+# mne>=1.5           # saliency topomaps (Fig. 5)
