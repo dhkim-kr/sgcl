@@ -3,7 +3,6 @@ supervised-only loops used by the method ablation (Table 8)."""
 
 import time
 
-import numpy as np
 import torch
 import torch.nn.functional as F
 from sklearn.metrics import confusion_matrix, f1_score
