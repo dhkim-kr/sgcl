@@ -1,69 +1,61 @@
-# [EAAI 2025] Semi-supervised Graph Contrastive Learning for Emotion Recognition based on Electroencephalogram Signals
+# SGCL: Semi-supervised Graph Contrastive Learning for EEG Emotion Recognition
 
-<div align="center">
+Dae Hyeon Kim and Young-Seok Choi  
+*Engineering Applications of Artificial Intelligence* 161, 111969, 2025. [Paper](https://doi.org/10.1016/j.engappai.2025.111969)
 
-**Dae Hyeon Kim**<sup></sup>, **Young-Seok Choi**<sup>*</sup>
+SGCL combines DE and PSD feature networks through symmetric similarity network fusion (SSNF), then trains a shared graph encoder with supervised and graph contrastive objectives.
 
-<sup></sup>Department of Electronics and Communications Engineering, Kwangwoon University, Seoul, South Korea
+## Architecture
 
-[![Journal](https://img.shields.io/badge/EAAI-2025-orange.svg)](https://www.sciencedirect.com/journal/engineering-applications-of-artificial-intelligence)
-[![Paper](https://img.shields.io/badge/paper-PDF-red)](https://doi.org/10.1016/j.engappai.2025.111969)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![SGCL architecture: feature construction, SSNF, graph encoder, and contrastive training](figures/architecture.png)
 
-</div>
+*Paper Figure 1. Nodes represent EEG sample windows; edges represent sample similarity.*
 
----
+| Component | Operation |
+|---|---|
+| Node features | Differential entropy (DE) and power spectral density (PSD) |
+| Graph construction | Feature-specific similarity networks, broad/local k-nearest neighborhoods, symmetric normalization, and cross-diffusion |
+| Encoder | Shared two-layer GCN with CELU activation and a projection head |
+| Augmentation | Edge dropping and feature masking |
+| Objective | Cross-entropy on labeled nodes + weighted contrastive loss on the two graph views |
 
-## 📢 News
+## Results
 
-* **[Aug. 2026]** 🚀 **The official code released!**
-* **[Sep. 2025]** 📖 Our paper has been published in ***Engineering Applications of Artificial Intelligence***, vol. 161 (available online September 1, 2025).
-* **[Aug. 2025]** 🎉 Our paper **"Semi-supervised graph contrastive learning for emotion recognition based on electroencephalogram signals"** has been accepted to ***Engineering Applications of Artificial Intelligence***! (August 4, 2025)
-* **[Jun. 2025]** ✍️ Revised manuscript submitted. (June 20, 2025)
-* **[Nov. 2024]** 📨 Manuscript submitted. (November 28, 2024)
+**Protocol:** subject-wise, transductive node classification. Labeled and unlabeled samples participate in the graph; supervision uses the labeled subset. These results do not measure transfer to an unseen subject. Accuracy is reported as mean ± standard deviation (%), following Tables 1, 2, and 5.
 
----
+| Dataset / task | Case 1 | Case 2 | Case 3 |
+|---|---:|---:|---:|
+| SEED | 99.54 ± 0.47 | 99.98 ± 0.05 | 99.99 ± 0.01 |
+| SEED-IV | 84.61 ± 4.20 | 90.30 ± 4.32 | 95.38 ± 1.75 |
+| DEAP valence | 91.04 ± 2.68 | 94.52 ± 2.11 | 96.88 ± 1.60 |
+| DEAP arousal | 91.01 ± 3.71 | 95.12 ± 2.12 | 97.15 ± 1.61 |
 
-## 📄 Publication
+| Dataset | Labeled samples per class, Cases 1 / 2 / 3 | Labeled fraction, Cases 1 / 2 / 3 |
+|---|---|---|
+| SEED | 60 / 90 / 120 | 1.8% / 2.7% / 3.5% |
+| SEED-IV | 15 / 20 / 25 | 2.4% / 3.2% / 4.0% |
+| DEAP | 60 / 90 / 120 | 4.8% / 7.1% / 9.5% |
 
-> D. H. Kim and Y.-S. Choi, "Semi-supervised graph contrastive learning for emotion recognition based on electroencephalogram signals," *Engineering Applications of Artificial Intelligence*, vol. 161, p. 111969, 2025. https://doi.org/10.1016/j.engappai.2025.111969
+### Component ablation
 
-*Engineering Applications of Artificial Intelligence* — **Elsevier** · **Impact Factor 9.0** · **JCR Q1**
+Case 1, accuracy (%); selected rows from Tables 7–8. All three settings use DE + PSD + SSNF.
 
----
+| Setting | SEED | SEED-IV | DEAP valence | DEAP arousal |
+|---|---:|---:|---:|---:|
+| PCA + GCN (G3) | 93.58 ± 3.57 | 77.43 ± 6.35 | 83.95 ± 4.10 | 82.50 ± 4.48 |
+| Graph encoder (G6) | 98.18 ± 1.15 | 80.62 ± 4.51 | 88.08 ± 3.17 | 88.22 ± 3.38 |
+| SGCL (G9) | 99.54 ± 0.47 | 84.61 ± 4.20 | 91.04 ± 2.68 | 91.01 ± 3.71 |
 
-## 📝 Abstract
+<details>
+<summary>Embedding analysis</summary>
 
-Labeling EEG is expensive, but unlabeled EEG is abundant. **SGCL** trains an emotion classifier from a handful of labeled samples per class by leveraging every unlabeled sample in a transductive graph — reaching 99.99% average accuracy on SEED with only 3.5% of the data labeled.
+![Input features and learned embeddings across datasets](figures/embeddings.png)
 
-The framework consists of three components:
+*Paper Figure 4. Representative-subject t-SNE plots; annotations belong to these examples, not the aggregate results above.*
 
-- **SSNF (Symmetric Similarity Network Fusion)** — DE and PSD features each build an exponential-kernel similarity network; a dual k-NN scheme (broad k1, local k2) with symmetric normalization and cross-diffusion fuses them into one adjacency matrix.
-- **GE (Graph Encoder)** — a shared two-layer GCN encoder (CELU) with a two-layer projection head.
-- **GCL (Graph Contrastive Learning)** — two graph views from uniform edge dropping and feature masking, pulled together by an InfoNCE loss alongside cross-entropy on the labeled nodes: `L = L_sup + λ·L_con`.
+</details>
 
-<div align="center">
-  <img src="figures/framework.png" alt="SGCL framework" width="100%">
-  <br>
-  <em>Figure 1: The entire framework of the proposed SGCL model.</em>
-</div>
-
----
-
-## 📊 Results
-
-Average accuracy (%) over subjects, by labeled samples per class (Case 1/2/3):
-
-| Dataset | Case 1 | Case 2 | Case 3 |
-|---|---|---|---|
-| SEED (3-class) | 99.54 | 99.98 | 99.99 |
-| SEED-IV (4-class) | 84.61 | 90.30 | 95.38 |
-| DEAP valence | 91.04 | 94.52 | 96.88 |
-| DEAP arousal | 91.01 | 95.12 | 97.15 |
-
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Installation
 
@@ -99,12 +91,12 @@ Each run writes per-subject accuracy, F1, and confusion matrices plus a mean±st
 
 ---
 
-## 🔬 Reproducing the Paper
+## Reproducing the Paper
 
 | Paper artifact | Command |
 |---|---|
 | Tables 2, 4, 5 — main results | the four commands above |
-| Table 3 — cross-session | `python main.py --config configs/seed_iv_cross_session.yaml` |
+| Additional cross-session configuration | `python main.py --config configs/seed_iv_cross_session.yaml` |
 | Table 6 — training time | add `--timed` |
 | Tables 7-8 — method ablation G1-G9 | `--mode ablation` (subset via `--schemes de_gcl psd_gcl ...`) |
 | Table 9 — window size | `python main.py --config configs/seed_iv_1s.yaml` |
@@ -113,11 +105,11 @@ Each run writes per-subject accuracy, F1, and confusion matrices plus a mean±st
 | Fig. 5 — saliency topomaps | `--mode saliency` (needs `mne`) |
 | Fig. 6 — p_e × p_f grid | `--mode grid --cases 3` |
 
-Notes: this is a refactoring of the research notebooks into modules, behavior-matched to the code that produced the paper (the training loop is trajectory-identical under the same weights and RNG). Graph construction was vectorized, seeding happens once per subject run, and F1 is taken at the best-accuracy epoch. The Table-10 `no_broad_knn` / `no_local_knn` variants are reconstructions; only `no_knn` survives verbatim in the original notebooks.
+The release refactors the research notebooks into modules. The `no_broad_knn` and `no_local_knn` variants reconstruct ablation configurations. Paper Table 3 compares SGCL with methods evaluated under different labeling and session protocols; it is not a matched cross-session evaluation of SGCL.
 
 ---
 
-## 📚 Citation
+## Citation
 
 ```bibtex
 @article{kim2025sgcl,
@@ -132,10 +124,10 @@ Notes: this is a refactoring of the research notebooks into modules, behavior-ma
 }
 ```
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 The contrastive-loss implementation is adapted from [GRACE](https://github.com/CRIPAC-DIG/GRACE) (Zhu et al., 2020).
 
-## 📜 License
+## License
 
 This project is released under the [MIT License](LICENSE).
