@@ -1,5 +1,12 @@
 # SGCL: Semi-supervised Graph Contrastive Learning for EEG Emotion Recognition
 
+## Status
+
+| Item | Status |
+|---|---|
+| Research | Published · EAAI 2025 |
+| Implementation | Training, evaluation, and ablation configurations |
+
 Dae Hyeon Kim and Young-Seok Choi  
 *Engineering Applications of Artificial Intelligence* 161, 111969, 2025. [Paper](https://doi.org/10.1016/j.engappai.2025.111969)
 
@@ -9,7 +16,7 @@ SGCL combines DE and PSD feature networks through symmetric similarity network f
 
 ![SGCL architecture: feature construction, SSNF, graph encoder, and contrastive training](figures/architecture.png)
 
-*Paper Figure 1. Nodes represent EEG sample windows; edges represent sample similarity.*
+*Nodes represent EEG sample windows; edges represent sample similarity.*
 
 | Component | Operation |
 |---|---|
@@ -51,7 +58,7 @@ Case 1, accuracy (%); selected rows from Tables 7–8. All three settings use DE
 
 ![Input features and learned embeddings across datasets](figures/embeddings.png)
 
-*Paper Figure 4. Representative-subject t-SNE plots; annotations belong to these examples, not the aggregate results above.*
+*Representative-subject t-SNE plots; annotations belong to these examples, not the aggregate results above.*
 
 </details>
 
@@ -83,7 +90,7 @@ python main.py --config configs/seed_iv.yaml
 python main.py --config configs/deap_valence.yaml
 python main.py --config configs/deap_arousal.yaml
 
-# a quick look: one case, a few subjects, live logs
+# subset run: one case, three subjects, verbose logging
 python main.py --config configs/seed_iv.yaml --cases 3 --subjects 1 2 3 --verbose
 ```
 
